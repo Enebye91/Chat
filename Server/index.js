@@ -26,12 +26,15 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
-  socket.on("send_message", (data => {
-   // her skal alt den emit til alle som er connected til serveren. broadcast gør at man kan sende til alle andre end en selv. 
-   socket.broadcast.emit("receive_message, data") // Man giver den en ny event, som bliver listen til i frontend
+  socket.on("send_message", (data) => {
+    // her skal alt den emit til alle som er connected til serveren. broadcast gør at man kan sende til alle andre end en selv.
+    socket.broadcast.emit("receive_message, data"); // Man giver den en ny event, som bliver listen til i frontend
+  }); // callback function som vil modtage dataen fra objectet i App.jsx
 
-
-  })); // callback function som vil modtage dataen fra objectet i App.jsx
+  // Håndter afbrydelser
+  socket.on("disconnect", () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
 });
 
 // React køre på port 5173, derfor 5174
