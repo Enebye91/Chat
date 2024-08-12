@@ -18,20 +18,41 @@ function App() {
 
   // Her kan man listen til eventet fra backenden ved et useEffect Hook, hver gang at der bliver smidt et event over til os
   // Så hver gang at et event er emittet, køre denne function med socket variablen
+  // useEffect(() => {
+  //   socket.on("receive_message", (data) => {
+  //     setMessageReceived(data, message);
+  //     // alert(data.message);
+  //   });
+  // }, [socket]);
+
+  // Brug useEffect til at lytte til beskeder fra serveren
   useEffect(() => {
-    socket.on("receive_message", (data) => {
-      setMessageReceived(data, message);
-      // alert(data.message);
+    const handleReceiveMessage = (data) => {
+      setMessageReceived(data.message);
+    };
+
+    socket.on("receive_message", handleReceiveMessage);
+
+    socket.on("connect_error", (error) => {
+      console.error("Connection error:", error);
     });
-  }, [socket]);
+
+    // Ryd op, når komponenten demonteres
+    return () => {
+      socket.off("receive_message", handleReceiveMessage);
+    };
+  }, []); // Tom afhængighedsliste betyder, at denne effekt kun kører én gang ved montering
 
   return (
     <>
       <input
         placeholder="Message..."
-        onChange={(event) => {
-          setMessage(event.target.value);
-        }}
+        // onChange={(event) => {
+        //   setMessage(event.target.value);
+        // }}
+
+        value={message}
+        onChange={(event) => setMessage(event.target.value)}
       />
       <button onClick={sendMessage}> Send </button>
       <h1>Message: </h1>

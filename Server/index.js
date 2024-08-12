@@ -28,7 +28,7 @@ io.on("connection", (socket) => {
 
   socket.on("send_message", (data) => {
     // her skal alt den emit til alle som er connected til serveren. broadcast gør at man kan sende til alle andre end en selv.
-    socket.broadcast.emit("receive_message, data"); // Man giver den en ny event, som bliver listen til i frontend
+    socket.broadcast.emit("receive_message", data); // Man giver den en ny event, som bliver listen til i frontend
   }); // callback function som vil modtage dataen fra objectet i App.jsx
 
   // Håndter afbrydelser
