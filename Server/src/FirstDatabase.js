@@ -1,4 +1,4 @@
-const DatabaseHandler = require("./DatabaseHandler");
+const DatabaseHandler = require("./DatabaseHandlerMongoDB");
 
 class FirstDatabaseHandler extends DatabaseHandler {
   constructor() {
