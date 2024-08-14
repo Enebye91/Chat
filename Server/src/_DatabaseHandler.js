@@ -1,5 +1,5 @@
 //Database Interface
-class DatabaseInterface {
+class _DatabaseHandler {
   // Tilslutter til DB
   async connect(connectionString) {
     throw new Error("Method not implemented");
@@ -34,4 +34,4 @@ class DatabaseInterface {
 }
 
 // Eksporetere den selvstændige fil
-module.exports = DatabaseInterface;
+module.exports = _DatabaseHandler;
