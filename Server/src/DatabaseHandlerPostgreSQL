@@ -1,4 +1,4 @@
-const { Pool } = require("pg");
+const { Client } = require("pg");
 const _DatabaseHandler = require("./Server./src/DatabaseInterface");
 
 class DatabaseHandlerPostgres extends _DatabaseHandler {
