@@ -3,11 +3,11 @@
 //express server
 const express = require("express");
 const app = express();
+// app.use(express.static('Client'))
 const http = require("http");
 const cors = require("cors");
 // cors middleware. prevent you from getting connections errors.
 app.use(cors());
-
 const { Server } = require("socket.io"); // Henter class Server fra socket.io libery
 
 // HTTP server med express
