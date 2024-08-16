@@ -2,6 +2,11 @@
 const UserRepository = require("./UserRepository");
 
 class MySQLUserRepository extends UserRepository {
+  constructor(databaseHandler) {
+    super();
+    this.dbHandler = databaseHandler;
+  }
+
   async findUser(query) {
     // MySQL kode til at finde en user
   }

@@ -2,6 +2,11 @@
 const UserRepository = require("./UserRepository");
 
 class PostgresSQLUserRepository extends UserRepository {
+  constructor(databaseHandler) {
+    super();
+    this.dbHandler = databaseHandler;
+  }
+
   async findUser(query) {
     // PostgresSQL kode til at finde en user
   }

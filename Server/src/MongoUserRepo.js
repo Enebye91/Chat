@@ -1,7 +1,21 @@
 // MongoUserRepository.js
 const UserRepository = require("./UserRepository");
+// const DatabaseHandlerMongoDB = require("./DatabaseHandlerMongoDB");
 
 class MongoUserRepository extends UserRepository {
+    constructor(databaseHandler) {
+        super();
+        this.dbHandler = databaseHandler; 
+    }
+//   constructor() {
+//     super();
+//     this.dbHandler = new DatabaseHandlerMongoDB(); // Initialize med MongoDB handleren
+//   }
+
+//   async init(connectionString) {
+//     await this.dbHandler.connect(connectionString); //Forbinder til DB
+//   } 
+
   async findUser(query) {
     // MongoDB kode til at finde en user
   }
