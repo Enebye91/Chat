@@ -1,6 +1,6 @@
 const MongoDBUserRepository = require("./UserRepository/MongoUserRepo");
-const MySQLUserRepository = require("./MySQLUserRepo");
-const PostgresSQLUserRepo = require("./PostgresSQLUserRepo");
+const MySQLUserRepository = require("./UserRepository/MySQLUserRepo");
+const PostgresSQLUserRepo = require("./UserRepository/PostgresSQLUserRepo");
 
 const DatabaseHandlerMongoDB = require("./DatabaseHandler/DatabaseHandlerMongoDB");
 const DatabaseHandlerMySQL = require("./DatabaseHandler/DatabaseHandlerMySQL");
