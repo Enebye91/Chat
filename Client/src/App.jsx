@@ -1,6 +1,6 @@
 import "./App.css";
 import io from "socket.io-client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 // import Popup from "./PopUp.jsx";
 
 const socket = io.connect("http://localhost:5174");
@@ -9,10 +9,10 @@ export default function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [search, SetSearch] = useState("");
   const [friends] = useState(["Trutter", "Matheo"]);
-  const [activeFriend, setActiveFriend] = useState(null);
+  const [activeChats, setActiveChats] = useState([]);
   const [message, setMessage] = useState("");
-  const [messageReceived, setMessageReceived] = useState([]); // Beskeden man modtager fra den anden bruger.
-  // const [chatHistory, setChatHistory] = useState([]);
+  const [messageReceived, setMessageReceived] = useState({}); // Beskeden man modtager fra den anden bruger.
+  const chatContainerRef = useRef(null);
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
@@ -27,11 +27,14 @@ export default function App() {
   );
 
   const handleFriendClick = (friend) => {
-    setActiveFriend(friend);
+    if (!activeChats.includes(friend)) {
+      setActiveChats((prevChats) => [...prevChats, friend]);
+    }
+    setIsOpen(false);
   };
 
-  const closeChatWindow = () => {
-    setActiveFriend(null);
+  const closeChatWindow = (friend) => {
+    setActiveChats((prevChats) => prevChats.filter((chat) => chat !== friend));
   };
 
   const sendMessage = () => {
@@ -46,10 +49,25 @@ export default function App() {
     }
   };
 
+  useEffect(() => {
+    if (!isOpen && chatContainerRef.current) {
+      chatContainerRef.current.style.right = "100px";
+    } else if (isOpen && chatContainerRef.current) {
+      chatContainerRef.current.style.right = "400px";
+    }
+  }, [isOpen]);
+
   // Brug useEffect til at lytte til beskeder fra serveren
   useEffect(() => {
     socket.on("receive_message", (data) => {
-      setMessageReceived((prevMessages) => [...prevMessages, data.message]);
+      setMessageReceived((prevMessages) => {
+        const newMessages = { ...prevMessages };
+        if (!newMessages[data.friend]) {
+          newMessages[data.friend] = [];
+        }
+        newMessages[data.friend].push(data.message);
+        return newMessages;
+      });
     });
 
     socket.on("connect_error", (error) => {
@@ -96,33 +114,40 @@ export default function App() {
           </div>
         )}
 
-        {activeFriend && (
-          <section className="chat_app_wrapper">
-            <div className="chat_app_container">
-              <p>To: {activeFriend}</p>
-              <button className="close_btn" onClick={closeChatWindow}>
-                X
-              </button>
-            </div>
-            <div className="msg_received_wrapper">
-              {messageReceived.map((msg, index) => (
-                <p key={index} className="msg_received">{msg}</p>
-              ))}
-              {/* <p>start chatting with {activeFriend}</p> */}
-            </div>
-            <div className="chat_wrapper">
-              <input
-                placeholder="Aa"
-                value={message}
-                onChange={(event) => setMessage(event.target.value)}
-                onKeyDown={handleKeyDown}
-              />
-              <button className="send_btn" onClick={sendMessage}>
-                Send
-              </button>
-            </div>
-          </section>
-        )}
+        <div ref={chatContainerRef} className="chat_windows_container">
+          {activeChats.map((friend, index) => (
+            <section key={index} className="chat_app_wrapper">
+              <div className="chat_app_container">
+                <p>To: {friend}</p>
+                <button
+                  className="close_btn"
+                  onClick={() => closeChatWindow(friend)}
+                >
+                  X
+                </button>
+              </div>
+              <div className="msg_received_wrapper">
+                {messageReceived[friend] &&
+                  messageReceived[friend].map((msg, msgIndex) => (
+                    <p key={msgIndex} className="msg_received">
+                      {msg}
+                    </p>
+                  ))}
+              </div>
+              <div className="chat_wrapper">
+                <input
+                  placeholder="Aa"
+                  value={message}
+                  onChange={(event) => setMessage(event.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+                <button className="send_btn" onClick={sendMessage}>
+                  Send
+                </button>
+              </div>
+            </section>
+          ))}
+        </div>
       </section>
       {/* <section className="chat_app_wrapper">
         <div className="chat_app_container"></div>
