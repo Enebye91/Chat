@@ -14,14 +14,14 @@
   flex-direction: column;
   justify-content: space-between;
   bottom: 90px;
-  right: 400px;
+  right: 100px;
   width: 300px;
   background-color: var(--offwhite);
   border: 1px solid var(--brown);
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
-  height: 50%;
+  height: 100%;
   overflow: hidden;
 }
 
