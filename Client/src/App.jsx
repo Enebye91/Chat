@@ -10,7 +10,7 @@ export default function App() {
   const [search, SetSearch] = useState("");
   const [friends] = useState(["Trutter", "Matheo"]);
   const [activeChats, setActiveChats] = useState([]);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState({});
   const [messageReceived, setMessageReceived] = useState({}); // Beskeden man modtager fra den anden bruger.
   const chatContainerRef = useRef(null);
 
@@ -37,16 +37,38 @@ export default function App() {
     setActiveChats((prevChats) => prevChats.filter((chat) => chat !== friend));
   };
 
-  const sendMessage = () => {
-    const friend = activeChats[0];
-    socket.emit("send_message", { message, friend });
-    setMessage("");
+  const handleMessageChange = (event, friend) => {
+    const newMessage = event.target.value;
+    setMessage((prevMessages) => ({
+      ...prevMessages,
+      [friend]: newMessage,
+    }));
   };
 
-  const handleKeyDown = (event) => {
+  const sendMessage = (friend) => {
+    if (message[friend]) {
+      socket.emit("send_message", { message: message[friend], friend });
+
+      // Opdater beskeder, så den sendte besked vises straks i chatten
+      setMessageReceived((prevMessages) => {
+        const newMessages = { ...prevMessages };
+        if (!newMessages[friend]) {
+          newMessages[friend] = [];
+        }
+        newMessages[friend].push(message[friend]);
+
+        return newMessages;
+      });
+
+      // Tøm input feltet efter besked er sendt
+      setMessage((prevMessages) => ({ ...prevMessages, [friend]: "" }));
+    }
+  };
+
+  const handleKeyDown = (event, friend) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      sendMessage();
+      sendMessage(friend);
     }
   };
 
@@ -138,11 +160,14 @@ export default function App() {
               <div className="chat_wrapper">
                 <input
                   placeholder="Aa"
-                  value={message}
-                  onChange={(event) => setMessage(event.target.value)}
-                  onKeyDown={handleKeyDown}
+                  value={message[friend] || ""}
+                  onChange={(event) => handleMessageChange(event, friend)}
+                  onKeyDown={(event) => handleKeyDown(event, friend)}
                 />
-                <button className="send_btn" onClick={sendMessage}>
+                <button
+                  className="send_btn"
+                  onClick={() => sendMessage(friend)}
+                >
                   Send
                 </button>
               </div>
