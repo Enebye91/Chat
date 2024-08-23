@@ -38,7 +38,8 @@ export default function App() {
   };
 
   const sendMessage = () => {
-    socket.emit("send_message", { message });
+    const friend = activeChats[0];
+    socket.emit("send_message", { message, friend });
     setMessage("");
   };
 
@@ -66,6 +67,7 @@ export default function App() {
           newMessages[data.friend] = [];
         }
         newMessages[data.friend].push(data.message);
+
         return newMessages;
       });
     });
@@ -93,7 +95,6 @@ export default function App() {
           <div className="chat_popup">
             <div className="headline_container">
               <p>New message</p>
-              {/* <littleHeadline text="New message" /> */}
             </div>
 
             <input
@@ -149,17 +150,6 @@ export default function App() {
           ))}
         </div>
       </section>
-      {/* <section className="chat_app_wrapper">
-        <div className="chat_app_container"></div>
-        <input
-          placeholder="Message..."
-          value={message}
-          onChange={(event) => setMessage(event.target.value)}
-        />
-        <button onClick={sendMessage}> Send </button>
-        <h1>Message: </h1>
-        {messageReceived}
-      </section> */}
     </>
   );
 }
