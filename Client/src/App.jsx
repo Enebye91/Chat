@@ -1,7 +1,10 @@
 import "./App.css";
 import io from "socket.io-client";
 import { useEffect, useState, useRef } from "react";
-// import Popup from "./PopUp.jsx";
+import ChatCircle from "./Components/ChatCircle";
+import ChatPopup from "./Components/ChatPopup";
+import ChatWindow from "./Components/ChatWindow";
+
 
 const socket = io.connect("http://localhost:5174");
 
@@ -11,17 +14,14 @@ export default function App() {
   const [friends] = useState(["Trutter", "Matheo"]);
   const [activeChats, setActiveChats] = useState([]);
   const [message, setMessage] = useState({});
-  const [messageReceived, setMessageReceived] = useState({}); // Beskeden man modtager fra den anden bruger.
+  const [messageReceived, setMessageReceived] = useState({});
   const [darkmode, setDarkmode] = useState(false);
+  const [minimizedChat, setMinimizedChat] = useState([]);
   const chatContainerRef = useRef(null);
 
-  const toggleChat = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleChat = () => setIsOpen(!isOpen);
 
-  const handleSearchChange = (e) => {
-    SetSearch(e.target.value);
-  };
+  const handleSearchChange = (e) => SetSearch(e.target.value);
 
   const filteredFriends = friends.filter((friend) =>
     friend.toLowerCase().includes(search.toLowerCase())
@@ -36,6 +36,7 @@ export default function App() {
 
   const closeChatWindow = (friend) => {
     setActiveChats((prevChats) => prevChats.filter((chat) => chat !== friend));
+    setMinimizedChat((prev) => prev.filter((chat) => chat !== friend));
   };
 
   const handleMessageChange = (event, friend) => {
@@ -50,7 +51,6 @@ export default function App() {
     if (message[friend]) {
       socket.emit("send_message", { message: message[friend], friend });
 
-      // Opdater beskeder, så den sendte besked vises straks i chatten
       setMessageReceived((prevMessages) => {
         const newMessages = { ...prevMessages };
         if (!newMessages[friend]) {
@@ -61,7 +61,6 @@ export default function App() {
         return newMessages;
       });
 
-      // Tøm input feltet efter besked er sendt
       setMessage((prevMessages) => ({ ...prevMessages, [friend]: "" }));
     }
   };
@@ -73,19 +72,16 @@ export default function App() {
     }
   };
 
-  const toggleDarkmode = () => {
-    setDarkmode((prevMode) => !prevMode);
+  const toggleDarkmode = () => setDarkmode((prevMode) => !prevMode);
+
+  const toggleMinimizedChat = (friend) => {
+    if (minimizedChat.includes(friend)) {
+      setMinimizedChat((prev) => prev.filter((chat) => chat !== friend));
+    } else {
+      setMinimizedChat((prev) => [...prev, friend]);
+    }
   };
 
-  useEffect(() => {
-    if (!isOpen && chatContainerRef.current) {
-      chatContainerRef.current.style.right = "100px";
-    } else if (isOpen && chatContainerRef.current) {
-      chatContainerRef.current.style.right = "400px";
-    }
-  }, [isOpen]);
-
-  // Brug useEffect til at lytte til beskeder fra serveren
   useEffect(() => {
     socket.on("receive_message", (data) => {
       setMessageReceived((prevMessages) => {
@@ -106,90 +102,44 @@ export default function App() {
     return () => {
       socket.off("receive_message");
     };
-  }, []); // Tom afhængighedsliste betyder, at denne effekt kun kører én gang ved montering
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen && chatContainerRef.current) {
+      chatContainerRef.current.style.right = "100px";
+    } else if (isOpen && chatContainerRef.current) {
+      chatContainerRef.current.style.right = "400px";
+    }
+  }, [isOpen]);
 
   return (
-    <>
-      <section className="app_container">
-        <div
-          className={`chat_circle ${isOpen ? "open" : ""}`}
-          onClick={toggleChat}
-        >
-          <span>💬</span>
-        </div>
-
-        {isOpen && (
-          <div className="chat_popup">
-            <div className="headline_container">
-              <p>New message</p>
-            </div>
-
-            <input
-              type="text"
-              placeholder="Search for a friend"
-              value={search}
-              onChange={handleSearchChange}
-            />
-            <div className="searchlist_wrapper">
-              <ul>
-                {filteredFriends.map((friend, index) => (
-                  <li key={index} onClick={() => handleFriendClick(friend)}>
-                    {friend}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-
-        <div ref={chatContainerRef} className="chat_windows_container">
-          {activeChats.map((friend, index) => (
-            <section
-              key={index}
-              className={`chat_app_wrapper ${
-                darkmode ? "dark-mode" : "light-mode"
-              }`}
-            >
-              <div className="chat_app_container">
-                <p>To: {friend}</p>
-                <div className="btn_container">
-                  <button onClick={toggleDarkmode} className="color_btn">
-                    {darkmode ? "Light Mode" : "Dark Mode"}
-                  </button>
-                  <button
-                    className="close_btn"
-                    onClick={() => closeChatWindow(friend)}
-                  >
-                    X
-                  </button>
-                </div>
-              </div>
-              <div className="msg_received_wrapper">
-                {messageReceived[friend] &&
-                  messageReceived[friend].map((msg, msgIndex) => (
-                    <p key={msgIndex} className="msg_received">
-                      {msg}
-                    </p>
-                  ))}
-              </div>
-              <div className="chat_wrapper">
-                <input
-                  placeholder="Aa"
-                  value={message[friend] || ""}
-                  onChange={(event) => handleMessageChange(event, friend)}
-                  onKeyDown={(event) => handleKeyDown(event, friend)}
-                />
-                <button
-                  className="send_btn"
-                  onClick={() => sendMessage(friend)}
-                >
-                  Send
-                </button>
-              </div>
-            </section>
-          ))}
-        </div>
-      </section>
-    </>
+    <section className="app_container">
+      <ChatCircle isOpen={isOpen} toggleChat={toggleChat} />
+      <ChatPopup
+        isOpen={isOpen}
+        search={search}
+        handleSearchChange={handleSearchChange}
+        filteredFriends={filteredFriends}
+        handleFriendClick={handleFriendClick}
+      />
+      <div ref={chatContainerRef} className="chat_windows_container">
+        {activeChats.map((friend, index) => (
+          <ChatWindow
+            key={index}
+            friend={friend}
+            isMinimized={minimizedChat.includes(friend)}
+            darkmode={darkmode}
+            toggleDarkmode={toggleDarkmode}
+            toggleMinimizedChat={toggleMinimizedChat}
+            closeChatWindow={closeChatWindow}
+            messageReceived={messageReceived}
+            message={message}
+            handleMessageChange={handleMessageChange}
+            handleKeyDown={handleKeyDown}
+            sendMessage={sendMessage}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
