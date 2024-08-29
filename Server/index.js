@@ -1,14 +1,23 @@
-// backend
-
 //express server
+require("dotenv").config();
 const express = require("express");
+// const mongoose = require("mongoose");
 const app = express();
-// app.use(express.static('Client'))
 const http = require("http");
-const cors = require("cors");
-// cors middleware. prevent you from getting connections errors.
-app.use(cors());
+const cors = require("cors"); // cors middleware. prevent you from getting connections errors.
 const { Server } = require("socket.io"); // Henter class Server fra socket.io libery
+
+app.use(cors());
+
+// const mongoURI = process.env.Mongo_URI;
+// console.log("Mongo URI:", process.env.Mongo_URI);
+// mongoose
+//   .connect(mongoURI, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => console.log("MongoDB connected"))
+//   .catch((err) => console.log("Failed to connect to MongoDB", err));
 
 // HTTP server med express
 const server = http.createServer(app);

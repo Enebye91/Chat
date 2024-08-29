@@ -12,6 +12,7 @@ export default function App() {
   const [activeChats, setActiveChats] = useState([]);
   const [message, setMessage] = useState({});
   const [messageReceived, setMessageReceived] = useState({}); // Beskeden man modtager fra den anden bruger.
+  const [darkmode, setDarkmode] = useState(false);
   const chatContainerRef = useRef(null);
 
   const toggleChat = () => {
@@ -70,6 +71,10 @@ export default function App() {
       event.preventDefault();
       sendMessage(friend);
     }
+  };
+
+  const toggleDarkmode = () => {
+    setDarkmode((prevMode) => !prevMode);
   };
 
   useEffect(() => {
@@ -139,15 +144,25 @@ export default function App() {
 
         <div ref={chatContainerRef} className="chat_windows_container">
           {activeChats.map((friend, index) => (
-            <section key={index} className="chat_app_wrapper">
+            <section
+              key={index}
+              className={`chat_app_wrapper ${
+                darkmode ? "dark-mode" : "light-mode"
+              }`}
+            >
               <div className="chat_app_container">
                 <p>To: {friend}</p>
-                <button
-                  className="close_btn"
-                  onClick={() => closeChatWindow(friend)}
-                >
-                  X
-                </button>
+                <div className="btn_container">
+                  <button onClick={toggleDarkmode} className="color_btn">
+                    {darkmode ? "Light Mode" : "Dark Mode"}
+                  </button>
+                  <button
+                    className="close_btn"
+                    onClick={() => closeChatWindow(friend)}
+                  >
+                    X
+                  </button>
+                </div>
               </div>
               <div className="msg_received_wrapper">
                 {messageReceived[friend] &&

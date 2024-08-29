@@ -25,16 +25,36 @@
   overflow: hidden;
 }
 
+.chat_app_wrapper.dark-mode {
+  background-color: #333;
+  color: white;
+}
+
+.chat_app_wrapper.light-mode {
+  background-color: white;
+  color: black;
+}
 
 .chat_app_container {
   position: relative;
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
+  background-color: lavender;
 }
 
 .chat_app_container:hover {
   align-items: center;
+}
+
+.btn_container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.color_btn {
+  cursor: pointer;
+  border: var(--brown);
 }
 
 .close_btn {
@@ -48,6 +68,11 @@
   color: var(--offwhite);
   border-radius: 50px;
   height: 20px;
+}
+
+.color_btn {
+  background-color: var(--transparent);
+  border: none;
 }
 
 .msg_received_wrapper {
