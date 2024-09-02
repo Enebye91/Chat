@@ -1,11 +1,14 @@
 //express server
 require("dotenv").config();
 const express = require("express");
-// const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const app = express();
 const http = require("http");
 const cors = require("cors"); // cors middleware. prevent you from getting connections errors.
 const { Server } = require("socket.io"); // Henter class Server fra socket.io libery
+const DatabaseHandler = require("../Server/src/DatabaseHandlers/DatabaseHandlerMongoDB.js");
+const db = new DatabaseHandler();
+// db.test();
 
 app.use(cors());
 

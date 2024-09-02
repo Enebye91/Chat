@@ -1,5 +1,4 @@
 
-
 export default function ChatPopup({ isOpen, search, handleSearchChange, filteredFriends, handleFriendClick }) {
   return (
     isOpen && (
