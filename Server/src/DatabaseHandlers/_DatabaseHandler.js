@@ -1,6 +1,5 @@
 //Database Interface
 class _DatabaseHandler {
-  // Tilslutter til DB
   async connect(connectionString) {
     throw new Error("Method not implemented");
   }

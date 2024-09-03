@@ -1,38 +1,31 @@
 //express server
-require("dotenv").config();
+// require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const app = express();
 const http = require("http");
 const cors = require("cors"); // cors middleware. prevent you from getting connections errors.
 const { Server } = require("socket.io"); // Henter class Server fra socket.io libery
 const DatabaseHandler = require("../Server/src/DatabaseHandlers/DatabaseHandlerMongoDB.js");
 const db = new DatabaseHandler();
-// db.test();
+// const userRoute = require('../Server/src/routes/userRoute.js');
 
-app.use(cors());
 
-// const mongoURI = process.env.Mongo_URI;
-// console.log("Mongo URI:", process.env.Mongo_URI);
-// mongoose
-//   .connect(mongoURI, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => console.log("MongoDB connected"))
-//   .catch((err) => console.log("Failed to connect to MongoDB", err));
-
-// HTTP server med express
+const app = express();
 const server = http.createServer(app);
-
-// Vigtig variable, så man kan arbejde med socket.io
-// new server, fordi server er en class ovenover
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
     methods: ["GET", "POST"],
   },
 });
+
+app.use(cors());
+
+// app.use('/api', userRoute);
+
+
+
+
 
 // Listen to an event. Så lige så snart en user logger ind, vil det her starte med at køre.
 io.on("connection", (socket) => {

@@ -1,11 +1,10 @@
 // MongoUserRepository.js
-const UserRepository = require("./UserRepository");
-// const DatabaseHandler = require("../Server/src/DatabaseHandlers/DatabaseHandlerMongoDB.js");
+const DatabaseHandler = require("../src/DatabaseHandlers/DatabaseHandlerMongoDB.js");
 
 class MongoUserRepository extends UserRepository {
   constructor(databaseHandler) {
     super();
-    this.dbHandler = databaseHandler;
+    this.dbHandler = new DatabaseHandler();
   }
 
   async init(connectionString) {
@@ -13,11 +12,8 @@ class MongoUserRepository extends UserRepository {
   }
 
   async findUser(query) {
-    // MongoDB kode til at finde en user
     try {
-      const result = await this.dbHandler.db
-        .collection("users")
-        .find.one(query);
+      const result = await this.dbHandler.db.collection("users").findOne(query);
       return result;
     } catch (error) {
       console.log("Can't find user", error);
@@ -25,15 +21,36 @@ class MongoUserRepository extends UserRepository {
   }
 
   async createUser(user) {
-    // MongoDB kode til at oprette en bruger
+    try {
+      const result = await this.dbHandler.db
+        .collection("users")
+        .insertOne(user);
+      return result.insertedId;
+    } catch (error) {
+      console.error("Can't create user", error);
+    }
   }
 
   async updateUser(query, update) {
-    // MongoDB kode til at opdatere en bruger
+    try {
+      const result = await this.dbHandler.db
+        .collection("users")
+        .updateOne(query, { $set: update });
+      return result;
+    } catch (error) {
+      console.error("Cant update user", error);
+    }
   }
 
   async deleteUser(query) {
-    // MongoDB kode til at slette en bruger
+    try {
+      const result = await this.dbHandler.db
+        .collection("users")
+        .deleteOne(query);
+      return result;
+    } catch (error) {
+      console.error("Cant delete user", error);
+    }
   }
 }
 

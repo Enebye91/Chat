@@ -1,7 +1,6 @@
 // require("dotenv").config();
 const { MongoClient } = require("mongodb");
 
-
 class DatabaseHandler {
   constructor() {
     this.connectionString =
