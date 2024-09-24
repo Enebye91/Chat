@@ -1,11 +1,12 @@
 //UserRepository
 
 class UserRepository {
-  async findUser(query) {
+
+  async createUser(user) {
     throw new Error("Method not implemented");
   }
 
-  async createUser(user) {
+  async findUser(query) {
     throw new Error("Method not implemented");
   }
 

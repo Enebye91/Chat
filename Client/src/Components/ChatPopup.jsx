@@ -1,5 +1,13 @@
+import PropTypes from "prop-types";
+import UserList from "./GetUsers";
 
-export default function ChatPopup({ isOpen, search, handleSearchChange, filteredFriends, handleFriendClick }) {
+export default function ChatPopup({ 
+  isOpen, 
+  search, 
+  handleSearchChange, 
+  // filteredFriends, 
+  handleFriendClick }) 
+{
   return (
     isOpen && (
       <div className="chat_popup">
@@ -13,17 +21,25 @@ export default function ChatPopup({ isOpen, search, handleSearchChange, filtered
           onChange={handleSearchChange}
         />
         <div className="searchlist_wrapper">
-          <ul>
+          <UserList search={search} onFriend={handleFriendClick}/>
+          {/* <ul>
             {filteredFriends.map((friend, index) => (
               <li key={index} onClick={() => handleFriendClick(friend)}>
                 {friend}
               </li>
             ))}
-          </ul>
+          </ul> */}
         </div>
       </div>
     )
   );
 }
-
+ 
+ChatPopup.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  search: PropTypes.string.isRequired,
+  handleSearchChange: PropTypes.func.isRequired,
+  // filteredFriends: PropTypes.arrayOf(PropTypes.string).isRequired,
+  handleFriendClick: PropTypes.func.isRequired,
+};
 

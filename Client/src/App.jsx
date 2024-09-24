@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import ChatCircle from "./Components/ChatCircle";
 import ChatPopup from "./Components/ChatPopup";
 import ChatWindow from "./Components/ChatWindow";
-
+import UserForm from "./Components/UserForm"; 
 
 const socket = io.connect("http://localhost:5174");
 
@@ -114,6 +114,10 @@ export default function App() {
 
   return (
     <section className="app_container">
+      <div>
+       <UserForm/>
+
+      </div>
       <ChatCircle isOpen={isOpen} toggleChat={toggleChat} />
       <ChatPopup
         isOpen={isOpen}
@@ -122,6 +126,7 @@ export default function App() {
         filteredFriends={filteredFriends}
         handleFriendClick={handleFriendClick}
       />
+
       <div ref={chatContainerRef} className="chat_windows_container">
         {activeChats.map((friend, index) => (
           <ChatWindow

@@ -4,7 +4,6 @@ class _DatabaseHandler {
     throw new Error("Method not implemented");
   }
 
-  // ved at bruge async returnere den et promise
   // message parameteret sendes til metoden. Da metoden ikke er implementeret endnu står der ikke hvordan parameteret message bliver brugt.
   // Den er en placeholder
   async saveMessage(message) {
